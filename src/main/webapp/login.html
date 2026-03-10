@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login - Duster</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:
+linear-gradient(rgba(10,15,30,0.75), rgba(10,15,30,0.75)),
+url("images/bg.jpg");
+background-size:cover;
+background-position:center;
+background-attachment:fixed;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+overflow:hidden;
+position:relative;
+
+/* Slide In Effect */
+opacity:0;
+transform:translateY(40px);
+}
+
+/* Fade + Slide animation */
+body.show{
+transition:all 0.8s ease;
+opacity:1;
+transform:translateY(0);
+}
+
+/* Floating Background Glow */
+body::before,
+body::after{
+content:"";
+position:absolute;
+width:300px;
+height:300px;
+border-radius:50%;
+background:radial-gradient(circle, rgba(37,117,252,0.35), transparent 70%);
+animation:floatBg 8s ease-in-out infinite;
+z-index:0;
+}
+
+body::before{
+top:-100px;
+left:-100px;
+}
+
+body::after{
+bottom:-120px;
+right:-120px;
+animation-delay:4s;
+}
+
+@keyframes floatBg{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-30px);}
+100%{transform:translateY(0px);}
+}
+
+/* Card Float */
+@keyframes floatCard{
+0%{transform:translateY(0px);}
+50%{transform:translateY(-12px);}
+100%{transform:translateY(0px);}
+}
+
+/* Glow Pulse */
+@keyframes glowPulse{
+0%{box-shadow:0 0 25px rgba(106,17,203,0.4);}
+50%{box-shadow:0 0 45px rgba(37,117,252,0.7);}
+100%{box-shadow:0 0 25px rgba(106,17,203,0.4);}
+}
+
+.glass{
+position:relative;
+z-index:1;
+background:rgba(255,255,255,0.06);
+backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,0.15);
+border-radius:20px;
+padding:40px;
+width:380px;
+animation:floatCard 4s ease-in-out infinite,
+          glowPulse 3s ease-in-out infinite;
+transition:0.4s;
+}
+
+.glass:hover{
+transform:scale(1.02);
+}
+
+h2{
+text-align:center;
+margin-bottom:25px;
+}
+
+/* Inputs */
+input{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border:none;
+border-radius:8px;
+outline:none;
+background:rgba(255,255,255,0.9);
+transition:0.3s;
+}
+
+input:focus{
+box-shadow:0 0 12px rgba(37,117,252,0.8);
+}
+
+/* Button */
+button{
+width:100%;
+padding:12px;
+border:none;
+border-radius:25px;
+background:linear-gradient(45deg,#6a11cb,#2575fc);
+color:white;
+font-weight:600;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.05);
+box-shadow:0 0 20px rgba(37,117,252,0.8);
+}
+
+.register-link{
+text-align:center;
+margin-top:15px;
+font-size:14px;
+}
+
+a{
+color:#90cdf4;
+text-decoration:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<form action="LoginServlet" method="post" class="glass">
+
+<h2>Welcome Back</h2>
+
+<input type="text" name="username" placeholder="Username" required>
+<input type="password" name="password" placeholder="Password" required>
+
+<button type="submit">Login</button>
+
+<div class="register-link">
+Don't have account? <a href="register.html">Register</a>
+</div>
+
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(() => {
+        document.body.classList.add("show");
+    }, 50);
+});
+</script>
+
+</body>
+</html>

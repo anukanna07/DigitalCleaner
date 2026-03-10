@@ -1,0 +1,13 @@
+servlet\LogoutServlet.class
+utils\FileScanner.class
+com\example\Main.class
+servlet\CleanServlet.class
+servlet\LoginServlet.class
+servlet\DeletePermanentServlet.class
+utils\ImageAnalyzer.class
+utils\FileInfo.class
+utils\package-info.class
+utils\RiskIndicator.class
+servlet\ScanServlet.class
+servlet\package-info.class
+servlet\RegisterServlet.class

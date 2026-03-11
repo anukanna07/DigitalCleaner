@@ -178,24 +178,22 @@ transform:scale(1.1);
 
 <p>Digital Clutter Cleaner</p>
 
-<form action="ScanServlet"
-method="post"
-enctype="multipart/form-data">
+<form action="ScanServlet" method="post" enctype="multipart/form-data">
 
 <input
 type="file"
 id="fileInput"
-name="files"
-webkitdirectory
+name="screenshots"
 multiple
-accept="image/*">
+accept="image/*"
+style="display:none">
 
 <div
 class="fake-input"
 onclick="document.getElementById('fileInput').click()"
 id="folderText">
 
-Enter Screenshot Folder Path
+Select Screenshot Folder 
 
 </div>
 
@@ -247,10 +245,14 @@ document
 
 let count=e.target.files.length;
 
+if(count>0){
+
 document
 .getElementById("folderText")
 .innerHTML=
-count+" images selected";
+"📂 "+count+" screenshots selected";
+
+}
 
 });
 

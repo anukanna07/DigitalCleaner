@@ -1,25 +1,24 @@
 package servlet;
 
 import java.io.IOException;
-import java.io.File;
-import java.util.List;
+import java.util.Collection;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.*;
 
-import utils.FileScanner;
-import utils.ImageAnalyzer;
-import utils.FileInfo;
+import javax.servlet.http.Part;
 
 @WebServlet("/ScanServlet")
+@MultipartConfig
 public class ScanServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request,
                           HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 🔒 Session Protection
+        // Session check
         HttpSession session = request.getSession(false);
 
         if(session == null || session.getAttribute("loggedIn") == null) {
@@ -27,14 +26,23 @@ public class ScanServlet extends HttpServlet {
             return;
         }
 
-        String folderPath = request.getParameter("folderPath");
+        // Get uploaded files
+        Collection<Part> files = request.getParts();
 
-        List<File> files = FileScanner.getScreenshotFiles(folderPath);
-        List<FileInfo> analyzedFiles = ImageAnalyzer.analyze(files);
+        int count = 0;
 
-        request.setAttribute("files", analyzedFiles);
+        for(Part file : files){
+
+            if(file.getSubmittedFileName()!=null &&
+               file.getSubmittedFileName().length()>0){
+
+                count++;
+            }
+        }
+
+        request.setAttribute("totalScreenshots", count);
 
         request.getRequestDispatcher("result.jsp")
-               .forward(request, response);
+               .forward(request,response);
     }
 }

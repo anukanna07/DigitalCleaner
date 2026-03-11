@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.*;
+import java.util.Collection;
 
 import utils.ImageAnalyzer;
 import utils.FileInfo;

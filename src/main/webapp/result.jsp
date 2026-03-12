@@ -204,7 +204,7 @@ else{
 
 <input type="checkbox"
        name="selectedFiles"
-       value="<%= info.getFile().getAbsolutePath() %>"
+       value="<%= info.getFile().getName() %>"
        data-size="<%= info.getFile().length()/1024 %>"
        <%= (info.isDuplicate() || info.isOldFile()) ? "checked" : "" %> >
 

@@ -10,77 +10,169 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
 @WebServlet("/CleanServlet")
-public class CleanServlet extends HttpServlet {
 
-    protected void doPost(HttpServletRequest request,
-                          HttpServletResponse response)
-            throws ServletException, IOException {
+public class CleanServlet extends HttpServlet{
 
-        HttpSession session = request.getSession(false);
+protected void doPost(
+HttpServletRequest request,
+HttpServletResponse response)
 
-        if(session == null || session.getAttribute("loggedIn") == null){
-            response.sendRedirect("login.html");
-            return;
-        }
+throws ServletException, IOException{
 
-        String[] selectedFiles = request.getParameterValues("selectedFiles");
 
-        int deletedCount = 0;
-        long totalSavedBytes = 0;
+HttpSession session =
+request.getSession(false);
 
-        // ===== Recover Vault Folder =====
-        String vaultPath = getServletContext().getRealPath("/RecoverVault");
-        File vaultFolder = new File(vaultPath);
+if(session==null ||
+session.getAttribute("loggedIn")==null){
 
-        if(!vaultFolder.exists()){
-            vaultFolder.mkdir();
-        }
+response.sendRedirect("login.html");
 
-        if(selectedFiles != null){
-            for(String path : selectedFiles){
+return;
 
-                File file = new File(path);
+}
 
-                if(file.exists()){
 
-                    totalSavedBytes += file.length();
+String[] selectedFiles =
+request.getParameterValues("selectedFiles");
 
-                    File destination = new File(vaultFolder, file.getName());
+int deletedCount = 0;
 
-                    try{
-                        Files.move(file.toPath(),
-                                   destination.toPath(),
-                                   StandardCopyOption.REPLACE_EXISTING);
+long totalSavedBytes = 0;
 
-                        deletedCount++;
 
-                    }catch(Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
+/* ===== RENDER SAFE PATHS ===== */
 
-        long totalSavedKB = totalSavedBytes / 1024;
+String uploadPath =
+"/tmp/uploads";
 
-        // Send to cleanResult.jsp
-        request.setAttribute("deletedCount", deletedCount);
-        request.setAttribute("spaceSaved", totalSavedKB);
+String vaultPath =
+"/tmp/RecoverVault";
 
-        // ===== UPDATE SESSION DASHBOARD STATS =====
-        Integer sessionDeleted = (Integer) session.getAttribute("totalDeleted");
-        Long sessionSaved = (Long) session.getAttribute("totalSaved");
 
-        if(sessionDeleted == null) sessionDeleted = 0;
-        if(sessionSaved == null) sessionSaved = 0L;
+File vaultFolder =
+new File(vaultPath);
 
-        sessionDeleted += deletedCount;
-        sessionSaved += totalSavedKB;
+if(!vaultFolder.exists()){
 
-        session.setAttribute("totalDeleted", sessionDeleted);
-        session.setAttribute("totalSaved", sessionSaved);
+vaultFolder.mkdirs();
 
-        request.getRequestDispatcher("cleanResult.jsp")
-               .forward(request, response);
-    }
+}
+
+
+/* ===== PROCESS FILES ===== */
+
+if(selectedFiles!=null){
+
+for(String fileName:selectedFiles){
+
+File file =
+new File(uploadPath,fileName);
+
+if(file.exists()){
+
+totalSavedBytes +=
+file.length();
+
+
+File destination =
+new File(vaultFolder,
+fileName);
+
+try{
+
+Files.move(
+
+file.toPath(),
+
+destination.toPath(),
+
+StandardCopyOption.REPLACE_EXISTING
+
+);
+
+deletedCount++;
+
+}catch(Exception e){
+
+e.printStackTrace();
+
+}
+
+}
+
+}
+
+}
+
+
+long totalSavedKB =
+totalSavedBytes/1024;
+
+
+/* ===== RESULT DATA ===== */
+
+request.setAttribute(
+"deletedCount",
+deletedCount
+);
+
+request.setAttribute(
+"spaceSaved",
+totalSavedKB
+);
+
+
+/* ===== SESSION DASHBOARD UPDATE ===== */
+
+Integer sessionDeleted =
+(Integer)session.getAttribute(
+"totalDeleted"
+);
+
+Long sessionSaved =
+(Long)session.getAttribute(
+"totalSaved"
+);
+
+
+if(sessionDeleted==null)
+sessionDeleted=0;
+
+if(sessionSaved==null)
+sessionSaved=0L;
+
+
+sessionDeleted +=
+deletedCount;
+
+sessionSaved +=
+totalSavedKB;
+
+
+session.setAttribute(
+"totalDeleted",
+sessionDeleted
+);
+
+session.setAttribute(
+"totalSaved",
+sessionSaved
+);
+
+
+/* ===== FORWARD RESULT ===== */
+
+request
+.getRequestDispatcher(
+"cleanResult.jsp"
+)
+
+.forward(
+request,
+response
+);
+
+}
+
 }

@@ -158,8 +158,6 @@ request
 request,
 response
 );
-
 }
-
 }
 }

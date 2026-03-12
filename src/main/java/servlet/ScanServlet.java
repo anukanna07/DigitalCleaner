@@ -7,7 +7,6 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.*;
-import java.util.Collection;
 
 import utils.ImageAnalyzer;
 import utils.FileInfo;
@@ -15,21 +14,31 @@ import utils.FileInfo;
 @WebServlet("/ScanServlet")
 
 @MultipartConfig(
+
+location="/tmp",
+
 fileSizeThreshold=1024*1024*2,
+
 maxFileSize=1024*1024*50,
+
 maxRequestSize=1024*1024*100
+
 )
 
-public class ScanServlet extends HttpServlet {
+public class ScanServlet extends HttpServlet{
 
 protected void doPost(
+
 HttpServletRequest request,
+
 HttpServletResponse response)
 
-throws ServletException, IOException {
+throws ServletException, IOException{
 
 
-HttpSession session =
+/* SESSION CHECK */
+
+HttpSession session=
 request.getSession(false);
 
 if(session==null ||
@@ -41,47 +50,87 @@ return;
 
 }
 
-/* GET UPLOADED FILES */
 
-Collection<Part> parts =
+/* VERIFY MULTIPART */
+
+String contentType=
+request.getContentType();
+
+if(contentType==null ||
+!contentType.toLowerCase()
+.startsWith("multipart/")){
+
+response.getWriter()
+.println("Invalid upload request");
+
+return;
+
+}
+
+
+/* GET FILE PARTS */
+
+Collection<Part> parts=
 request.getParts();
 
-List<File> files =
+List<File> files=
 new ArrayList<>();
 
-/* temp upload folder */
 
-String uploadPath =
-getServletContext()
-.getRealPath("")
-+File.separator+
-"tempUploads";
+/* TEMP DIRECTORY */
 
-File uploadDir =
+String uploadPath="/tmp/uploads";
+
+File uploadDir=
 new File(uploadPath);
 
 if(!uploadDir.exists()){
 
-uploadDir.mkdir();
+uploadDir.mkdirs();
 
 }
 
-/* save uploaded images */
 
-for(Part part : parts){
+/* SAVE FILES */
 
-String fileName =
+for(Part part:parts){
+
+if(!"screenshots"
+.equals(part.getName()))
+continue;
+
+String fileName=
 part.getSubmittedFileName();
 
-if(fileName!=null &&
-fileName.endsWith(".png") ||
-fileName.endsWith(".jpg") ||
-fileName.endsWith(".jpeg")){
+if(fileName==null ||
+fileName.isEmpty())
+continue;
 
-File file =
-new File(uploadPath+
-File.separator+
-fileName);
+fileName=
+new File(fileName)
+.getName();
+
+
+if(!(fileName
+.toLowerCase()
+.endsWith(".png") ||
+
+fileName
+.toLowerCase()
+.endsWith(".jpg") ||
+
+fileName
+.toLowerCase()
+.endsWith(".jpeg")))
+continue;
+
+
+/* SAVE */
+
+File file=
+new File(uploadDir,
+System.currentTimeMillis()
++"_"+fileName);
 
 part.write(
 file.getAbsolutePath()
@@ -91,12 +140,16 @@ files.add(file);
 
 }
 
-}
 
-/* analyze images */
+/* ANALYZE */
 
-List<FileInfo> analyzedFiles =
-ImageAnalyzer.analyze(files);
+List<FileInfo> analyzedFiles=
+
+ImageAnalyzer
+.analyze(files);
+
+
+/* SEND RESULT */
 
 request.setAttribute(
 "files",
@@ -104,8 +157,15 @@ analyzedFiles
 );
 
 request
-.getRequestDispatcher("result.jsp")
-.forward(request,response);
+.getRequestDispatcher(
+"result.jsp"
+)
+
+.forward(
+request,
+response
+);
 
 }
+
 }

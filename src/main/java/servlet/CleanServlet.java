@@ -62,33 +62,35 @@ vaultFolder.mkdirs();
 
 /* ===== PROCESS FILES ===== */
 
+/* ===== PROCESS FILES ===== */
+
 if(selectedFiles!=null){
 
 for(String fileName:selectedFiles){
 
+fileName =
+java.net.URLDecoder.decode(
+fileName,"UTF-8");
+
 File file =
 new File(uploadPath,fileName);
+
+System.out.println("Trying: "+file.getAbsolutePath());
 
 if(file.exists()){
 
 totalSavedBytes +=
 file.length();
 
-
 File destination =
-new File(vaultFolder,
-fileName);
+new File(vaultFolder,fileName);
 
 try{
 
 Files.move(
-
 file.toPath(),
-
 destination.toPath(),
-
 StandardCopyOption.REPLACE_EXISTING
-
 );
 
 deletedCount++;
@@ -99,9 +101,15 @@ e.printStackTrace();
 
 }
 
+}else{
+
+System.out.println("File not found");
+
 }
 
 }
+
+
 
 }
 

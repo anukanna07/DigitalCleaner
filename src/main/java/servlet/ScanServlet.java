@@ -38,7 +38,7 @@ throws ServletException, IOException{
 
 /* SESSION CHECK */
 
-HttpSession session=
+HttpSession session =
 request.getSession(false);
 
 if(session==null ||
@@ -53,15 +53,13 @@ return;
 
 /* VERIFY MULTIPART */
 
-String contentType=
+String contentType =
 request.getContentType();
 
 if(contentType==null ||
-!contentType.toLowerCase()
-.startsWith("multipart/")){
+!contentType.toLowerCase().startsWith("multipart/")){
 
-response.getWriter()
-.println("Invalid upload request");
+response.getWriter().println("Invalid upload request");
 
 return;
 
@@ -70,18 +68,19 @@ return;
 
 /* GET FILE PARTS */
 
-Collection<Part> parts=
+Collection<Part> parts =
 request.getParts();
 
-List<File> files=
+List<File> files =
 new ArrayList<>();
 
 
 /* TEMP DIRECTORY */
 
-String uploadPath="/tmp/uploads";
+String uploadPath =
+"/tmp/uploads";
 
-File uploadDir=
+File uploadDir =
 new File(uploadPath);
 
 if(!uploadDir.exists()){
@@ -93,53 +92,45 @@ uploadDir.mkdirs();
 
 /* SAVE FILES */
 
-for(Part part:parts){
+for(Part part : parts){
 
-if(!"screenshots"
-.equals(part.getName()))
-continue;
-
-String fileName=
+String fileName =
 part.getSubmittedFileName();
 
 if(fileName==null ||
 fileName.isEmpty())
 continue;
 
-fileName=
-new File(fileName)
-.getName();
+fileName =
+new File(fileName).getName();
 
 
-if(!(fileName
-.toLowerCase()
-.endsWith(".png") ||
+/* IMAGE FILTER */
 
-fileName
-.toLowerCase()
-.endsWith(".jpg") ||
-
-fileName
-.toLowerCase()
-.endsWith(".jpeg")))
+if(!(fileName.toLowerCase().endsWith(".png") ||
+fileName.toLowerCase().endsWith(".jpg") ||
+fileName.toLowerCase().endsWith(".jpeg")))
 continue;
 
 
 /* SAVE */
 
-/* SAVE */
+File file =
+new File(uploadDir,fileName);
 
-File file=new File(uploadDir,fileName);
-part.write(file.getAbsolutePath());
+part.write(
+file.getAbsolutePath()
+);
 
 files.add(file);
 
+}
+
+
 /* ANALYZE */
 
-List<FileInfo> analyzedFiles=
-
-ImageAnalyzer
-.analyze(files);
+List<FileInfo> analyzedFiles =
+ImageAnalyzer.analyze(files);
 
 
 /* SEND RESULT */
@@ -153,11 +144,11 @@ request
 .getRequestDispatcher(
 "result.jsp"
 )
-
 .forward(
 request,
 response
 );
+
 }
-}
+
 }

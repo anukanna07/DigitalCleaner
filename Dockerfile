@@ -1,11 +1,7 @@
-FROM maven:3.9.9-eclipse-temurin-17
+FROM tomcat:9.0-jdk11
 
-WORKDIR /app
-
-COPY . .
-
-RUN mvn clean package
+COPY target/ServletProject.war /usr/local/tomcat/webapps/
 
 EXPOSE 8080
 
-CMD ["java","-jar","target/ServletProject.jar"]
+CMD ["catalina.sh","run"]

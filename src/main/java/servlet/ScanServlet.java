@@ -127,19 +127,12 @@ continue;
 
 /* SAVE */
 
-File file=
-new File(uploadDir,
-System.currentTimeMillis()
-+"_"+fileName);
+/* SAVE */
 
-part.write(
-file.getAbsolutePath()
-);
+File file=new File(uploadDir,fileName);
+part.write(file.getAbsolutePath());
 
 files.add(file);
-
-}
-
 
 /* ANALYZE */
 

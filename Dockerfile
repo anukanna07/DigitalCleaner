@@ -9,8 +9,8 @@ RUN mvn clean package
 
 FROM tomcat:9.0-jdk11
 
-COPY --from=build /app/target/ServletProject.war /usr/local/tomcat/webapps/
+COPY --from=build /app/target/ServletProject.war /usr/local/tomcat/webapps/ROOT.war
 
 EXPOSE 8080
 
-CMD ["catalina.sh","run"]
+CMD sed -i "s/8080/${PORT}/g" /usr/local/tomcat/conf/server.xml && catalina.sh run

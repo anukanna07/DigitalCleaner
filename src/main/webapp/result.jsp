@@ -216,7 +216,6 @@ else{
 <% } %>
 
 </div>
-Total Screenshots Found: ${totalScreenshots}
 <%
 }
 }
